@@ -16,7 +16,14 @@ namespace rbf
         static void Main(string[] args)
         {
             RbfTester rbfTester = new RbfTester();
-            rbfTester.run();
+            rbfTester.run(10, 40);
+            rbfTester.run(10, 1000);
+            rbfTester.run(10, 10000);
+            rbfTester.run(20, 1000);
+            rbfTester.run(50, 10000);
+            rbfTester.run(100, 1000);
+            //rbfTester.run(10, 1000);
+            //rbfTester.run(10, 1000);
         }
     }
 }

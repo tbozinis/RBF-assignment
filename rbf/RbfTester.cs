@@ -20,17 +20,22 @@ namespace rbf
         IMLData tInput;
         IMLData tIdeal;
 
+        double xTrainScale;
+        double xTestScale;
+        double yTrainScale;
+        double yTestScale;
+
         private BasicNeuralDataSet trainingSet;
 
         public RbfTester()
         {
         }
 
-        public void run()
+        public void run(int neurons, int trainInputCount)
         {
 
             int dimensions = 1;
-            int numNeuronsPerDimension = 7;
+            int numNeuronsPerDimension = neurons;
             double volumeNeuronWidth = 2.0 / numNeuronsPerDimension;
             bool includeEdgeRBFs = true;
 
@@ -44,7 +49,7 @@ namespace rbf
 
             network.SetRBFCentersAndWidthsEqualSpacing(0, 1, RBFEnum.Gaussian, volumeNeuronWidth, includeEdgeRBFs);
 
-            initInputs();
+            initInputs(trainInputCount, 30);
 
             IMLDataSet trainingSet = new BasicNeuralDataSet(input, ideal);
             SVDTraining train = new SVDTraining(network, trainingSet);
@@ -60,53 +65,93 @@ namespace rbf
 
             IMLDataSet testingSet = new BasicMLDataSet(testInput, testIdeal);
 
+
+            double error = 0.0;
+            int count = 0;
             foreach (BasicMLDataPair pair in testingSet)
             {
                 BasicMLData output = (BasicMLData)network.Compute(pair.Input);
-                //output.Data[0] 
-                Console.Out.Write(output.ToString());
-                Console.Out.WriteLine(pair.Ideal.ToString());
+                double temp = pair.Ideal[0];
+                error += Math.Pow(output.Data[0] - temp, 2);
+                count++;
             }
+
+            Console.Out.WriteLine(error/count);
         }
 
         private double f(double x)
         {
-            return Math.Abs(Math.Sin(Math.Sqrt(x) * x));
+            return Math.Sin(Math.Sqrt(x));
         }
 
-        private void initInputs()
+        private void initInputs(int trainLen, int testLen)
         {
-            input = new double[10000][];
-            ideal = new double[10000][];
+            input = new double[trainLen][];
+            ideal = new double[trainLen][];
 
-            testInput = new double[500][];
-            testIdeal = new double[500][];
-
-            double maxInput = 10000 * 0.1;
-            double maxIdeal = 1;//f(maxInput);
+            testInput = new double[testLen][];
+            testIdeal = new double[testLen][];
 
             double x = 0.0;
-            for (int i = 0; i < 10000; i++)
+            xTrainScale = x;
+            yTrainScale = f(x);
+            for (int i = 0; i < trainLen; i++)
             {
                 input[i] = new double[1];
-                input[i][0] = x / maxInput;
+                input[i][0] = x;
                 ideal[i] = new double[1];
-                ideal[i][0] = f(x) / maxIdeal;
+                ideal[i][0] = f(x);
+
+                xTrainScale = (toChange(x, xTrainScale)) ? x : xTrainScale;
+                yTrainScale = (toChange(f(x), yTrainScale)) ? f(x) : yTrainScale;
 
                 x += 0.1;
             }
 
-            maxInput = 500 * 0.05;
-            maxIdeal = 1; // f(maxInput);
-
             x = 0.0;
-            for (int i = 0; i < 500; i++)
+            xTestScale = x;
+            yTestScale = f(x);
+            for (int i = 0; i < testLen; i++)
             {
                 testInput[i] = new double[1];
-                testInput[i][0] = x / maxInput;
+                testInput[i][0] = x;
                 testIdeal[i] = new double[1];
-                testIdeal[i][0] = f(x) / maxIdeal;
+                testIdeal[i][0] = f(x);
+                
+                xTestScale = (toChange(x, xTestScale)) ? x : xTestScale;
+                yTestScale = (toChange(f(x), yTestScale)) ? f(x) : yTestScale;
                 x += 0.05;
+            }
+
+            for(int i = 0; i< trainLen; i++)
+            {
+                input[i][0] /= trainLen * 0.1;
+                ideal[i][0] /= f(trainLen * 0.1);
+            }
+
+            for(int i = 0; i < testLen; i++)
+            {
+                testInput[i][0] /= testLen * 0.05;
+                testIdeal[i][0] /= f(testLen * 0.05);
+            }
+
+            //Console.Out.WriteLine(x + ":" + xTestScale);
+        }
+
+        private bool toChange(double a, double b)
+        {
+            if (a < 0)
+            {
+                if (b < 0)
+                    return a < b;
+                else
+                    return a < (-1 * b);
+            } else
+            {
+                if (b > 0)
+                    return a > b;
+                else
+                    return a > (-1 * b);
             }
         }
     }
