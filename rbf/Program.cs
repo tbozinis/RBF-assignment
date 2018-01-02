@@ -16,14 +16,18 @@ namespace rbf
         static void Main(string[] args)
         {
             RbfTester rbfTester = new RbfTester();
-            rbfTester.run(10, 40);
-            rbfTester.run(10, 1000);
-            rbfTester.run(10, 10000);
-            rbfTester.run(20, 1000);
-            rbfTester.run(50, 10000);
-            rbfTester.run(100, 1000);
-            //rbfTester.run(10, 1000);
-            //rbfTester.run(10, 1000);
+            for (int i = 1000; i < 10001; i += 1000)
+            {
+                rbfTester.run(i, 5000);
+            }
+
+            for (int i = 1000; i < 10001; i += 1000)
+            {
+                rbfTester.run(i, 5000);
+            }
+
+            Console.Out.Write("\nPress any key to continue...");
+            Console.ReadLine();
         }
     }
 }

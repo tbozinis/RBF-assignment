@@ -1,0 +1,8 @@
+C:\Users\admin\source\repos\rbf\rbf\bin\Release\rbf.exe.config
+C:\Users\admin\source\repos\rbf\rbf\bin\Release\rbf.exe
+C:\Users\admin\source\repos\rbf\rbf\bin\Release\rbf.pdb
+C:\Users\admin\source\repos\rbf\rbf\bin\Release\encog-core-cs.dll
+C:\Users\admin\source\repos\rbf\rbf\obj\Release\rbf.csproj.CoreCompileInputs.cache
+C:\Users\admin\source\repos\rbf\rbf\obj\Release\rbf.exe
+C:\Users\admin\source\repos\rbf\rbf\obj\Release\rbf.pdb
+C:\Users\admin\source\repos\rbf\rbf\obj\Release\rbf.csprojResolveAssemblyReference.cache
