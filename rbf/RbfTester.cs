@@ -27,12 +27,16 @@ namespace rbf
 
         private BasicNeuralDataSet trainingSet;
 
+        private int f_type;
+
         public RbfTester()
         {
         }
 
-        public void run(int neurons, int trainInputCount)
+        public void run(int neurons, int trainInputCount, int type, bool randCentroids, RBFEnum rbf_type)
         {
+            f_type = type;
+
             int dimensions = 1;
             int numNeuronsPerDimension = neurons;
             double volumeNeuronWidth = 2.0 / numNeuronsPerDimension;
@@ -45,9 +49,22 @@ namespace rbf
             pattern.AddHiddenLayer(numNeurons);
 
             var network = (RBFNetwork)pattern.Generate();
+            
             Console.Out.WriteLine("num of hideen neurons: " + numNeurons + ", train input len: " + trainInputCount);
+            if (randCentroids)
+            {
+                Console.Out.WriteLine("Centers are randomized...");
+                network.RandomizeRBFCentersAndWidths(0, 1, rbf_type);
+            }
+            else
+            {
+                Console.Out.WriteLine("Centers are equaly spaced...");
+                network.SetRBFCentersAndWidthsEqualSpacing(0, 1, rbf_type, volumeNeuronWidth, includeEdgeRBFs);
+            }
 
-            network.SetRBFCentersAndWidthsEqualSpacing(0, 1, RBFEnum.Gaussian, volumeNeuronWidth, includeEdgeRBFs);
+            Console.Out.WriteLine("activation function: " + rbf_type.ToString());
+
+            printFun();
 
             initInputs(trainInputCount, trainInputCount / 3);
 
@@ -89,7 +106,55 @@ namespace rbf
 
         private double f(double x)
         {
-            return Math.Sin(x * Math.Sin(x));
+            switch (f_type)
+            {
+                case 0:
+                    return Math.Sin(x * Math.Sin(x));
+
+                case 1:
+                    return Math.Sqrt(x);
+
+                case 2:
+                    return Math.Sin(Math.Exp(x));
+
+                case 3:
+                    return Math.Pow(x, 2) + 5 * Math.Pow(x, 3.1) - 9 * (Math.Pow(x, 2.4));
+
+                case 4:
+                    return Math.Log10(x + 1) + Math.Sin(x);
+
+            default:
+                    return 0;
+            }
+        }
+
+        private void printFun()
+        {
+            switch (f_type)
+            {
+                case 0:
+                    Console.Out.WriteLine("target function: sin(x*sin(x))");
+                    break;
+                case 1:
+                    Console.Out.WriteLine("target function: sqrt(x)");
+                    break;
+
+                case 2:
+                    Console.Out.WriteLine("target function: sin(exp(x))");
+                    break;
+
+                case 3:
+                    Console.Out.WriteLine("target function: x^2 + 5x^3.1 - 9x^2.4");
+                    break;
+
+                case 4:
+                    Console.Out.WriteLine("target function: log(x+1) + sin(x)");
+                    break;
+
+                default:
+                    Console.Out.WriteLine("target function: 0");
+                    break;
+            }
         }
 
         private void initInputs(int trainLen, int testLen)

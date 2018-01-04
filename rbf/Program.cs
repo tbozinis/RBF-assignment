@@ -16,16 +16,22 @@ namespace rbf
         static void Main(string[] args)
         {
             RbfTester rbfTester = new RbfTester();
-            for (int i = 1000; i < 10001; i += 1000)
+            for(int type = 0; type < 5; type++)
             {
-                rbfTester.run(i, 5000);
+                for (int i = 10; i < 101; i += 10)
+                {
+                    rbfTester.run(i, 1000, type, true, RBFEnum.MexicanHat);
+                    rbfTester.run(i, 1000, type, false, RBFEnum.MexicanHat);
+                    rbfTester.run(i, 1000, type, true, RBFEnum.Gaussian);
+                    rbfTester.run(i, 1000, type, false, RBFEnum.Gaussian);
+                    rbfTester.run(i, 1000, type, true, RBFEnum.InverseMultiquadric);
+                    rbfTester.run(i, 1000, type, false, RBFEnum.InverseMultiquadric);
+                    rbfTester.run(i, 1000, type, true, RBFEnum.Multiquadric);
+                    rbfTester.run(i, 1000, type, false, RBFEnum.Multiquadric);
+                }
+                Console.ReadLine();
             }
-
-            for (int i = 1000; i < 10001; i += 1000)
-            {
-                rbfTester.run(i, 5000);
-            }
-
+            
             Console.Out.Write("\nPress any key to continue...");
             Console.ReadLine();
         }
